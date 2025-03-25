@@ -217,7 +217,7 @@ def plot_original_data(data):
 def fetch_historical_data(symbol, timeframe, limit=500):
     try:
         exchangeQ = ccxt.mexc({
-            'apiKey': '',#mx0vglvNw0UoaHMgop
+            'apiKey': '',#
             'secret': '',
             "enableRateLimit": True,
             'options': {
