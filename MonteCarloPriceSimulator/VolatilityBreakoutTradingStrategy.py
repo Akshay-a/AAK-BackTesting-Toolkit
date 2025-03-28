@@ -285,33 +285,35 @@ def plot_equity_curves(equity_curves, n_curves=20, title="Strategy Equity Curves
 
 # Example flow
 if __name__ == "__main__":
-    # Fetch historical data
-    historical_data = fetch_historical_data("BTC/USDT:USDT", "15m", 1920)
+    # Fetch historical data - get more data for better patterns
+    historical_data = fetch_historical_data("BTC/USDT:USDT", "15m", 2000)
     plot_original_data(historical_data)
     
-    # Initialize and run
+    # Initialize and run simulator
     sim = VolatilityBreakoutSimulator(
         historical_data=historical_data,
         timeframe="15m",
         num_simulations=1000,
-        simulation_length=1920,
+        simulation_length=1000,
         random_seed=42,
-        profit_target=0.02,    # Increased to 2%
-        stop_loss=0.02,        # Kept at 1%
-        lookback_period=48     # Reduced from 96 to 48 periods (12 hours)
+        profit_target=0.015,    # 1.5% profit target
+        stop_loss=0.01,         # 1% stop loss
+        lookback_period=48      # 12 hours (48 periods of 15min)
     )
     
-    # Generate price paths
-    sim.generate_price_paths(model_type="GARCH+JUMP")
-    sim.plot_simulated_paths(num_paths_to_plot=25)
+    # Generate price paths with simplified approach
+    sim.generate_price_paths(model_type="GBM")
+    
+    # Plot with enhanced visualization
+    sim.plot_simulated_paths(num_paths_to_plot=20, show_percentiles=True)
     
     # Run backtest and show results
     results = sim.backtest_strategy()
-    print("Backtest Results:")
+    print("\nBacktest Results:")
     for key, value in results.items():
         if key != "equity_curves":
-            print(f"  {key}: {value}")
+            print(f"  {key}: {value:.4f}" if isinstance(value, float) else f"  {key}: {value}")
     
     # Plot equity curves
-    plot_equity_curves(results["equity_curves"], n_curves=25, 
+    plot_equity_curves(results["equity_curves"], n_curves=20, 
                       title="Volatility Breakout Strategy - Equity Curves")
